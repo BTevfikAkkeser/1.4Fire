@@ -1,0 +1,22 @@
+Quick Setup
+
+-UPDATE- controls - Tilt/Buttons/Wheel. Tilt and Wheel controls work the best since they are continuous inputs. We are working on improving the buttons control.  
+
+All the vehicles are Drift ready. To generate a custom vehicle, click on Generate Vehicle > New Drift Vehicle > Choose the options and select generate.
+
+The Camera will automatically detect and snap to the new vehicle.
+
+To start testing the package, you could set the target build to Android/iOS and build the game to test it on your mobile device.
+
+Pro Tips for mastering drifting:
+The hold duration of the handbrake plays an important role in drifting. Turn while simultaneously holding the handbrake will drift your vehicle. Release the handbrake if your vehicle slows down. Before going into another turn, tap the handbrake once so that the vehicle does not spin off.
+
+We believe that drifting should be as easy as possible so that non-expert drifters can enjoy drifting without having to understand the mechanics of it all. Hence the vehicle counter steers on its own so you don't find it difficult to control. There is an option to change this however, Drift Controller > Drift Type : Manual_NoAssists
+
+
+If you have any queries, conserns, questions or suggestions, please send us an email at alternativemathsthinking@gmail.com.
+
+If you like the asset please consider rating it as it motivates us to add more vehicle models, rims, liveries, script enhancements, fix bugs and make the asset easier for developers to use. The price of this asset was set to a minimal amount only to cover our 3D modelling costs.
+
+
+Happy Drifting!
