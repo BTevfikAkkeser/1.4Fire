@@ -24,6 +24,13 @@ public class CarInteractionEventSO : ScriptableObject
     public bool hasToggleState = true;
     public bool defaultState = false;
 
+    [Header("VFX Settings")]
+    public bool useVFX = false;
+    public GameObject onStateVFXPrefab;
+    public GameObject offStateVFXPrefab;
+    public Vector3 vfxOffset = Vector3.zero;
+    public float vfxDuration = 2.0f;
+
     //[Header("Transform Settings")]
     public enum TransformationType
     {

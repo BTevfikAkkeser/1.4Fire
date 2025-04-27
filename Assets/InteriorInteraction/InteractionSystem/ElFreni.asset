@@ -20,6 +20,11 @@ MonoBehaviour:
   soundVolume: 1
   hasToggleState: 1
   defaultState: 0
+  useVFX: 0
+  onStateVFXPrefab: {fileID: 0}
+  offStateVFXPrefab: {fileID: 0}
+  vfxOffset: {x: 0, y: 0, z: 0}
+  vfxDuration: 2
   transformationType: 1
   rotationAxis: {x: 0, y: 1, z: 0}
   rotationAmount: 90

@@ -41,6 +41,10 @@ public class InteractableElementSO : MonoBehaviour
     private InteractiveElementOutliner outliner;
     private AudioSource audioSource;
     
+    // VFX referansları
+    private GameObject activeVFXInstance;
+    private Coroutine vfxCoroutine;
+    
     void Awake()
     {
         // Başlangıç değerlerini kaydet
@@ -67,6 +71,12 @@ public class InteractableElementSO : MonoBehaviour
             if (outlineColor == Color.yellow && interactionEvent.highlightColor != Color.yellow)
             {
                 outlineColor = interactionEvent.highlightColor;
+            }
+            
+            // Başlangıç durumuna göre VFX etkinleştir
+            if (interactionEvent.useVFX && isActivated && interactionEvent.onStateVFXPrefab != null)
+            {
+                PlayVFX(isActivated);
             }
         }
         
@@ -107,6 +117,12 @@ public class InteractableElementSO : MonoBehaviour
         {
             isActivated = !isActivated;
             onStateChanged.Invoke(isActivated);
+            
+            // VFX oynat
+            if (interactionEvent.useVFX)
+            {
+                PlayVFX(isActivated);
+            }
         }
         
         // Etkileşim sesi
@@ -123,6 +139,63 @@ public class InteractableElementSO : MonoBehaviour
         
         // Transformasyon animasyonunu başlat
         HandleTransformation();
+    }
+    
+    /// <summary>
+    /// VFX efektlerini oynat
+    /// </summary>
+    private void PlayVFX(bool state)
+    {
+        // Önceki VFX'i kaldır
+        if (activeVFXInstance != null)
+        {
+            Destroy(activeVFXInstance);
+            activeVFXInstance = null;
+        }
+        
+        // Önceki coroutine'i durdur
+        if (vfxCoroutine != null)
+        {
+            StopCoroutine(vfxCoroutine);
+            vfxCoroutine = null;
+        }
+        
+        // Duruma göre VFX prefabını seç
+        GameObject vfxPrefab = state ? 
+                            interactionEvent.onStateVFXPrefab : 
+                            interactionEvent.offStateVFXPrefab;
+        
+        if (vfxPrefab != null)
+        {
+            // VFX pozisyonunu ayarla
+            Vector3 vfxPosition = transform.position + interactionEvent.vfxOffset;
+            
+            // VFX'i oluştur
+            activeVFXInstance = Instantiate(vfxPrefab, vfxPosition, Quaternion.identity);
+            
+            // VFX'i ebeveyn olarak ayarla
+            activeVFXInstance.transform.SetParent(transform);
+            
+            // Eğer süre belirtilmişse, süreli yok et
+            if (interactionEvent.vfxDuration > 0)
+            {
+                vfxCoroutine = StartCoroutine(DestroyVFXAfterDuration());
+            }
+        }
+    }
+    
+    /// <summary>
+    /// VFX'i belirli süre sonra yok et
+    /// </summary>
+    private IEnumerator DestroyVFXAfterDuration()
+    {
+        yield return new WaitForSeconds(interactionEvent.vfxDuration);
+        
+        if (activeVFXInstance != null)
+        {
+            Destroy(activeVFXInstance);
+            activeVFXInstance = null;
+        }
     }
     
     /// <summary>
@@ -296,5 +369,16 @@ public class InteractableElementSO : MonoBehaviour
     public string GetInteractionMessage()
     {
         return interactionEvent != null ? interactionEvent.interactionMessage : "Press E to interact";
+    }
+    
+    /// <summary>
+    /// Nesne yok edildiğinde VFX'leri temizle
+    /// </summary>
+    void OnDestroy()
+    {
+        if (activeVFXInstance != null)
+        {
+            Destroy(activeVFXInstance);
+        }
     }
 }
