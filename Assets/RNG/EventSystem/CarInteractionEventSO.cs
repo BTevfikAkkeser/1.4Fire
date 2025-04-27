@@ -6,14 +6,14 @@ public class CarInteractionEventSO : ScriptableObject
 {
     [Header("Basic Info")]
     public string eventName;
-     public AudioClip soundClip;    // Ses klibi
+    public AudioClip soundClip;    // Ses klibi
     public ParticleSystem vfx;     // VFX (Visual Effects)
 
-    public float delayAfterPrevious = 1f;
+    private DriftController driftController;
 
     public void TriggerEvent(Transform eventOrigin)
     {
-        // Eğer ses varsa, ses kaynağını oynat
+        // Eğer event'te ses varsa, ses kaynağını oynat
         if (soundClip != null)
         {
             AudioSource audioSource = eventOrigin.GetComponent<AudioSource>();
@@ -29,8 +29,17 @@ public class CarInteractionEventSO : ScriptableObject
             ParticleSystem newVFX = Instantiate(vfx, eventOrigin.position, Quaternion.identity);
             newVFX.Play();
         }
+
+        // Eğer el freni eventi ise, DriftController üzerinden el freni aktif edilir
+        if (targetObject != null)
+        {
+            driftController = targetObject.GetComponent<DriftController>();
+            if (driftController != null)
+            {
+               // driftController.m_MaxHandbrakeTorque();  // El freni etkinleştirilir
+            }
+        }
     }
-    
 
     [Header("Interaction Settings")]
     public bool waitForInteraction;

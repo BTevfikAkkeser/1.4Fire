@@ -43,6 +43,7 @@ public class FirstPersonController : MonoBehaviour
     private float rotationY = 0;  // Horizontal rotation (looking left/right)
     private float targetFOV;
     private Outlinable currentTarget;
+
     
     void Start()
     {
@@ -78,6 +79,7 @@ public class FirstPersonController : MonoBehaviour
         // Allow cursor unlock with Escape key
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            CarInteractionEventSO interactionEvent = currentTarget.GetComponent<CarInteractionEventSO>();
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -89,6 +91,8 @@ public class FirstPersonController : MonoBehaviour
             Cursor.visible = false;
         }
     }
+
+
     
     /// <summary>
     /// Handle mouse look controls with horizontal and vertical limits
@@ -138,6 +142,29 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     void CheckForInteractiveObject()
     {
+
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        RaycastHit hit;
+        
+        if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+        {
+            Outlinable target = hit.collider.GetComponent<Outlinable>();
+            if (target != null)
+            {
+                if (currentTarget != target)
+                {
+                    // Yeni hedef, eski hedefin highlight'ı kaldırılır
+                    if (currentTarget != null)
+                    {
+                        currentTarget.SetHighlighted(false);
+                    }
+                    currentTarget = target;
+                    currentTarget.SetHighlighted(true);  // Yeni hedefi highlight et
+                }
+            }
+                currentTarget = target;
+                currentTarget.SetHighlighted(true);
+        }
         // Clear previous target highlight if it exists
         if (currentTarget != null)
         {
@@ -169,6 +196,7 @@ public class FirstPersonController : MonoBehaviour
             Outlinable outlinable = hit.collider.GetComponent<Outlinable>();
             if (outlinable != null)
             {
+                currentTarget.SetHighlighted(false);
                 // Set as current target and highlight it
                 currentTarget = outlinable;
                 // Enable the outline effect
