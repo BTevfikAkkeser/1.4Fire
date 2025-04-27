@@ -11,21 +11,18 @@ public class ScrollTexture : MonoBehaviour {
 	public Material[] materials;
 	public Material[] water;
 	
-	Manager manager;
-	
 	RoadTransitions roadTransitionsScript;
 	
 	//scrollspeed is 2 and start accelerating
 	void Start(){
 		roadTransitionsScript = GetComponent<RoadTransitions>();
-		manager = GameObject.FindObjectOfType<Manager>();
 	}
 
 	void Update(){
 		
 		//assign the scrollspeed if it's 0
-		if(scrollSpeed < manager.carHighSpeed)
-			scrollSpeed += Time.deltaTime * 2;
+		//if(scrollSpeed < carHighSpeed)
+		//	scrollSpeed += Time.deltaTime * 2;
 		
 		//for each material in the materials array, scroll it using offset
 		foreach(Material material in materials){

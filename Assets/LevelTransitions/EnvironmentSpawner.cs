@@ -25,7 +25,7 @@ public class EnvironmentSpawner : MonoBehaviour {
 	
 	[Space(10)]
 	public GameObject bridge;
-	public string boatName;
+	public string carName;
 	
 	//variables not visible in the inspector
     Vector3 randomPos;
@@ -92,7 +92,7 @@ public class EnvironmentSpawner : MonoBehaviour {
 		//randomize the position
 		int spawnRandomness = Random.Range(-randomSpawnRange, randomSpawnRange);
 	
-		if(newObject.name != boatName + "(Clone)"){
+		if(newObject.name != carName + "(Clone)"){
 			spawnPos = new Vector3(randomPos.x, randomPos.y, randomPos.z + spawnRandomness);
 			newObject.transform.localEulerAngles = new Vector3(newObject.transform.localEulerAngles.x, 0, newObject.transform.localEulerAngles.z);
 		}
@@ -104,7 +104,7 @@ public class EnvironmentSpawner : MonoBehaviour {
 		newObject.transform.position = spawnPos;
 	
 		//turn houses on the left 180° to rotate them towards the road
-		if(randomPosNumber == 1 && newObject.name != "tree(Clone)" && newObject.name != "cactus(Clone)" && newObject.name != "cactus 1(Clone)" && newObject.name != boatName + "(Clone)"){
+		if(randomPosNumber == 1 && newObject.name != "tree(Clone)" && newObject.name != "cactus(Clone)" && newObject.name != "cactus 1(Clone)" && newObject.name != carName + "(Clone)"){
 			newObject.transform.Rotate(Vector3.up * 180);	
 		}
 	}
