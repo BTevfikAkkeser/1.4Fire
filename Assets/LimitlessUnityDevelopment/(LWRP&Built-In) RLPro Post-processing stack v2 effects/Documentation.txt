@@ -1,0 +1,79 @@
+Retro Look Pro v2.8 Manual. 
+
+
+THANK YOU
+
+Thank you for purchasing Retro Look Pro - you've made my day! Take your time to play with it, but
+please take a moment, when you're ready to return to store and add a short Review or rating on
+the product page - taking just a couple of minutes to help with this will be greatly appreciated!
+Your review will help others make informed decisions and help to support me in the development! "https://assetstore.unity.com/packages/slug/133193"
+
+///
+[Intro]
+
+Retro Look Pro is a Post-processing effect. It emulates screen bleeding , artefacts , noise , interlacing, shake, glitches and other effects.
+It is the best and complete solution for retro like games and apps, 80's/90's/Retro/VHS/Glitch/TV look, security cameras.
+///
+
+[Setup Effects for Post processing stack!]
+
+Source: https://docs.unity3d.com/Packages/com.unity.postprocessing@2.3/manual/Installation.html
+
+IMPORTANT: To use Retro Look Pro make sure that you installed "Post processing" package from package manager (Window/Package Manager) !!!!
+
+1. Import "Post processing" package from package manager (Window/Package Manager).
+2. Import Retro Look Pro from asset store or package manager.
+3. Import LWRP&Built-in Render Retro Look Pro.unitypackage
+4. In "Assets\LimitlessUnityDevelopment\(LWRP&Built-In) RLPro Post-processing stack v2 effects\Example Scenes" folder you can find example scenes.
+5. To setup Unity's Post processing stack in your own scene use this instructions https://docs.unity3d.com/Packages/com.unity.postprocessing@3.1/manual/Quick-start.html
+6. In post process volume/profile click Add Effect/Retro Look Pro/"needed effect".
+
+IMPORTANT NOTE : To use presets please open "\Assets\LimitlessUnityDevelopment\RetroLookPro\Resources\ColormapPresets.unitypackage" and import it. Then fill RetroLookProColorPaletePresetsList\presetslist with all presets from "\Assets\LimitlessUnityDevelopment\RetroLookPro\Resources\Colormap Presets".
+///
+
+Color Palette IMPORTANT NOTE : To use presets please open "\Assets\LimitlessUnityDevelopment\RetroLookPro\Resources\ColormapPresets.unitypackage" and import it. Then fill RetroLookProColorPaletePresetsList\presetslist with all presets from "\Assets\LimitlessUnityDevelopment\RetroLookPro\Resources\Colormap Presets".
+
+///
+
+[Clean project]
+
+If you want keep your project assets clean and reduce package size, you have following options:
+
+1. Open RetroLookProColorPaletePresetsList.asset ("\Assets\LimitlessUnityDevelopment\Resources") and remove unnecessary items from the list. Then remove unneeded colormap presets from  "\Assets\LimitlessUnityDevelopment\Resources\Colormap Presets".
+2. Resources folder (Assets\LimitlessUnityDevelopment\Resources) remove unneeded Noise Textures.
+3. readme folder and asset can be removed.
+4. ThirdPartyAssets folder can be removed.
+5. Example Scenes folder can be removed.
+
+///
+
+
+[Manipulating effects variables from PP2 version of Retro look pro]
+
+https://docs.unity3d.com/Packages/com.unity.postprocessing@3.1/manual/Manipulating-the-Stack.html
+
+Also you can find effects manipulation example in ExampleScenes/Resourses folder.
+
+///
+
+[Contact]
+///
+
+If you want to leave a feedback or ask for new feature, use Asset related forum thread.
+https://forum.unity.com/threads/released-retro-look.583285/
+
+If you run into any issues or have questions, please do not hesitate to reach out ! I will do my best to respond as soon as I can.
+
+Contact email: limitlessunitydevelopment@gmail.com
+
+Please keep in mind that I’m in the UTC+5 timezone and usually reserve weekends for personal time.
+///
+
+Credits: 
+
+used Asset:
+Noise textures :
+https://www.deviantart.com/hxwlett/art/01-TEXTURES-PACK-VHS-601861083
+https://www.deviantart.com/xpegasvs/art/Pack-VHS-Vol-01-520737993
+https://www.deviantart.com/natieditions00/art/-VHS-TEXTURES-5--543052599
+Shader Calibration Scene - https://assetstore.unity.com/packages/essentials/tutorial-projects/shader-calibration-scene-25422

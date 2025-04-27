@@ -32,6 +32,11 @@ public class FirstPersonController : MonoBehaviour
     public Color normalCrosshairColor = Color.white;
     public Color interactableCrosshairColor = Color.yellow;
     
+    [Header("Debug Settings")]
+    public bool showDebugRay = true;
+    public Color debugRayColor = Color.yellow;
+    public Color debugHitColor = Color.green;
+    
     private Camera playerCamera;
     private float rotationX = 0;  // Vertical rotation (looking up/down)
     private float rotationY = 0;  // Horizontal rotation (looking left/right)
@@ -155,29 +160,51 @@ public class FirstPersonController : MonoBehaviour
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
         
-        // Check if we hit something within interaction distance
+        // Check if ray hits something within interaction distance
         if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
         {
-            // Check if the hit object has an InteractableObject component
-            InteractableElement interactable = hit.collider.GetComponent<InteractableElement>();
-            if (interactable != null && interactable.interactionEvent != null)
+            // Check if hit object has InteractableElement component
+            InteractableElement element = hit.collider.GetComponent<InteractableElement>();
+            if (element != null)
             {
-                // Set as current target
-                currentTarget = interactable;
+                // Set as current target and highlight it
+                currentTarget = element;
                 currentTarget.SetHighlighted(true);
                 
-                // Update UI text with the name from the interaction event
+                // Update UI
                 if (centerScreenText)
                 {
-                    centerScreenText.text = interactable.GetDisplayName();
+                    //centerScreenText.text = element.GetDisplayName();
                 }
                 
-                // Update crosshair to interactive color
                 if (crosshair)
                 {
                     crosshair.color = interactableCrosshairColor;
                 }
             }
+        }
+
+        // Debug visualization
+        if (showDebugRay)
+        {
+            Color rayColor = currentTarget != null ? debugHitColor : debugRayColor;
+            Debug.DrawRay(ray.origin, ray.direction * interactionDistance, rayColor);
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        if (!showDebugRay || playerCamera == null) return;
+
+        // Draw ray in scene view
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Gizmos.color = currentTarget != null ? debugHitColor : debugRayColor;
+        Gizmos.DrawRay(ray.origin, ray.direction * interactionDistance);
+
+        // Draw interaction sphere at hit point if there's a target
+        if (currentTarget != null)
+        {
+            Gizmos.DrawWireSphere(currentTarget.transform.position, 0.1f);
         }
     }
 }
