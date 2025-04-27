@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EPOOutline;
 using UnityEngine.UI;
 
 /// <summary>
@@ -41,7 +42,7 @@ public class FirstPersonController : MonoBehaviour
     private float rotationX = 0;  // Vertical rotation (looking up/down)
     private float rotationY = 0;  // Horizontal rotation (looking left/right)
     private float targetFOV;
-    private InteractableElement currentTarget;
+    private Outlinable currentTarget;
     
     void Start()
     {
@@ -71,7 +72,7 @@ public class FirstPersonController : MonoBehaviour
         // Handle interaction input
         if (Input.GetKeyDown(interactionKey) && currentTarget != null)
         {
-            currentTarget.Interact();
+            InteractWithObject();
         }
         
         // Allow cursor unlock with Escape key
@@ -140,7 +141,8 @@ public class FirstPersonController : MonoBehaviour
         // Clear previous target highlight if it exists
         if (currentTarget != null)
         {
-            currentTarget.SetHighlighted(false);
+            // Disable the outline effect
+            currentTarget.GetComponent<Outline>().enabled = false;
             currentTarget = null;
         }
         
@@ -163,18 +165,19 @@ public class FirstPersonController : MonoBehaviour
         // Check if ray hits something within interaction distance
         if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
         {
-            // Check if hit object has InteractableElement component
-            InteractableElement element = hit.collider.GetComponent<InteractableElement>();
-            if (element != null)
+            // Check if hit object has Outlinable component
+            Outlinable outlinable = hit.collider.GetComponent<Outlinable>();
+            if (outlinable != null)
             {
                 // Set as current target and highlight it
-                currentTarget = element;
-                currentTarget.SetHighlighted(true);
+                currentTarget = outlinable;
+                // Enable the outline effect
+                currentTarget.GetComponent<Outline>().enabled = true;
                 
                 // Update UI
                 if (centerScreenText)
                 {
-                    //centerScreenText.text = element.GetDisplayName();
+                    centerScreenText.text = "Press E to Interact";  // Customize prompt here
                 }
                 
                 if (crosshair)
@@ -189,6 +192,18 @@ public class FirstPersonController : MonoBehaviour
         {
             Color rayColor = currentTarget != null ? debugHitColor : debugRayColor;
             Debug.DrawRay(ray.origin, ray.direction * interactionDistance, rayColor);
+        }
+    }
+
+    void InteractWithObject()
+    {
+        if (currentTarget != null)
+        {
+            // Perform interaction
+            Debug.Log("Interacting with " + currentTarget.gameObject.name);
+            // Here you can add specific interaction logic like opening doors, triggering events, etc.
+            // For example, if the object has a specific interaction method, you could call it:
+            // currentTarget.Interact(); if it has such a method
         }
     }
 

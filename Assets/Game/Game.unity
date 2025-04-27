@@ -226,8 +226,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1263774487}
+  - component: {fileID: 1263774488}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: RoadManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -248,6 +249,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1263774488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263774486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 771e4f1fd94d8114ea833538da9bb4ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roadTransitions: []
+  startRoadObject: {fileID: 0}
+  water: {fileID: 0}
+  roadPartsWithWater: []
+  roadTransition: 0
+  transitionIndex: 0
+  startEnvironmentMask: 0
+  cloneLast: 0
 --- !u!1 &1599067253
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,9 +281,8 @@ GameObject:
   - component: {fileID: 1599067255}
   - component: {fileID: 1599067258}
   - component: {fileID: 1599067254}
-  - component: {fileID: 1599067257}
   m_Layer: 0
-  m_Name: LevelTransition
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -330,23 +350,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1599067257
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1599067253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92a4db29a19d4cd4bacaf0b2c60ff88a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scrollSpeed: 0
-  materials:
-  - {fileID: 0}
-  water:
-  - {fileID: 0}
 --- !u!114 &1599067258
 MonoBehaviour:
   m_ObjectHideFlags: 0
