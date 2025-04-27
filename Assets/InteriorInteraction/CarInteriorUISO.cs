@@ -10,9 +10,9 @@ using UnityEngine.UI;
 public class CarInteriorUISO : MonoBehaviour
 {
     [Header("UI References")]
-    public Text centerScreenText; // Ekranın ortasında görünen yazı
-    public GameObject interactionPanel; // Etkileşim paneli
     public Text elementNameText; // Eleman adı yazısı
+    public GameObject interactionPanel; // Etkileşim paneli
+    public Text centerScreenText; // Ekranın ortasında görünen yazı
     public Text elementDescriptionText; // Eleman açıklama yazısı
     public Slider interactionSlider; // Değer kontrolü slider'ı
     public Button rotateLeftButton; // Sola döndürme butonu
@@ -20,7 +20,7 @@ public class CarInteriorUISO : MonoBehaviour
     public Button toggleButton; // Açma/kapama butonu
     public Button closeButton; // Paneli kapatma butonu
     public Image elementIcon; // Eleman ikonu (opsiyonel)
-    
+    public Image crosshairImage; // Crosshair görseli
     
     [Header("Interaction Settings")]
     public float interactionDistance = 2.5f;
@@ -28,10 +28,26 @@ public class CarInteriorUISO : MonoBehaviour
     public KeyCode uiToggleKey = KeyCode.Tab; // UI panelini açma/kapama tuşu
     public LayerMask interactionLayer = -1; // Etkileşime girecek katmanlar
     
+    [Header("Ray Debug Settings")]
+    public bool showRayDebug = true;
+    public Color rayColorNormal = Color.white;
+    public Color rayColorHit = Color.green;
+    public float rayWidth = 2f;
+    public bool showHitPoint = true;
+    public float hitPointSize = 0.05f;
+    
+    [Header("Crosshair Settings")]
+    public Color crosshairNormalColor = Color.white;
+    public Color crosshairHighlightColor = Color.green;
+    public float crosshairSize = 20f;
+    
     // Etkileşim durumu
     private Camera playerCamera;
     private InteractableElementSO currentTarget;
     private bool isControlPanelOpen = false;
+    private Vector3 rayStartPos;
+    private Vector3 rayEndPos;
+    private bool hasRayHit;
     
     // Dönme kontrolü hızı
     private float rotationSpeed = 15f;
@@ -41,16 +57,17 @@ public class CarInteriorUISO : MonoBehaviour
         // Ana kamera referansı
         playerCamera = Camera.main;
         
-        // UI bileşenlerini kontrol et
-        if (!centerScreenText)
-        {
-            Debug.LogWarning("Center screen text not assigned in CarInteriorUISO!");
-        }
-        
         // UI panel başlangıçta kapalı
         if (interactionPanel)
         {
             interactionPanel.SetActive(false);
+        }
+        
+        // Crosshair ayarlarını yap
+        if (crosshairImage)
+        {
+            crosshairImage.rectTransform.sizeDelta = new Vector2(crosshairSize, crosshairSize);
+            crosshairImage.color = crosshairNormalColor;
         }
         
         // Button olaylarını ayarla
@@ -65,7 +82,7 @@ public class CarInteriorUISO : MonoBehaviour
             playerCamera = Camera.main;
             if (playerCamera == null) return;
         }
-
+        
         // Bakılan elemanı bul
         if (!isControlPanelOpen)
         {
@@ -86,9 +103,6 @@ public class CarInteriorUISO : MonoBehaviour
         {
             ToggleControlPanel();
         }
-        
-        // UI'ı güncelle
-        UpdateUI();
     }
     
     /// <summary>
@@ -109,7 +123,7 @@ public class CarInteriorUISO : MonoBehaviour
     void CheckForInteractiveElement()
     {
         if (playerCamera == null) return;
-
+        
         // Önceki hedefi temizle
         if (currentTarget != null)
         {
@@ -117,18 +131,21 @@ public class CarInteriorUISO : MonoBehaviour
             currentTarget = null;
         }
         
-        // Merkez yazıyı temizle
-        if (centerScreenText != null)
-        {
-            centerScreenText.text = "";
-        }
-        
-        // Ekranın ortasından ışın gönder
+        // Ray'i oluştur
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
         
+        // Ray başlangıç pozisyonunu kaydet
+        rayStartPos = ray.origin;
+        
         // Etkileşim mesafesi içinde bir şeye çarparsa
-        if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
+        hasRayHit = Physics.Raycast(ray, out hit, interactionDistance, interactionLayer);
+        rayEndPos = hasRayHit ? hit.point : ray.origin + ray.direction * interactionDistance;
+        
+        // Crosshair'i güncelle
+        UpdateCrosshair(hasRayHit && hit.collider.GetComponent<InteractableElementSO>() != null);
+        
+        if (hasRayHit)
         {
             // Çarpılan nesne InteractableElementSO bileşenine sahip mi?
             InteractableElementSO element = hit.collider.GetComponent<InteractableElementSO>();
@@ -145,6 +162,21 @@ public class CarInteriorUISO : MonoBehaviour
                 }
             }
         }
+        else if (centerScreenText != null)
+        {
+            centerScreenText.text = "";
+        }
+    }
+    
+    /// <summary>
+    /// Crosshair'i güncelle
+    /// </summary>
+    private void UpdateCrosshair(bool isTargeting)
+    {
+        if (crosshairImage == null) return;
+        
+        // Rengi güncelle
+        crosshairImage.color = isTargeting ? crosshairHighlightColor : crosshairNormalColor;
     }
     
     /// <summary>
@@ -249,14 +281,17 @@ public class CarInteriorUISO : MonoBehaviour
         }
         
         // Eleman ikonu (varsa)
-        if (elementIcon && currentTarget.interactionEvent.displayIcon != null)
+        if (elementIcon)
         {
-            elementIcon.gameObject.SetActive(true);
-            elementIcon.sprite = currentTarget.interactionEvent.displayIcon;
-        }
-        else if (elementIcon)
-        {
-            elementIcon.gameObject.SetActive(false);
+            if (currentTarget.interactionEvent.displayIcon != null)
+            {
+                elementIcon.gameObject.SetActive(true);
+                elementIcon.sprite = currentTarget.interactionEvent.displayIcon;
+            }
+            else
+            {
+                elementIcon.gameObject.SetActive(false);
+            }
         }
     }
     
@@ -338,8 +373,6 @@ public class CarInteriorUISO : MonoBehaviour
     
     #endregion
     
-    #region Public Methods
-    
     /// <summary>
     /// Belirli bir isimle etkileşimli eleman bul
     /// </summary>
@@ -357,7 +390,6 @@ public class CarInteriorUISO : MonoBehaviour
             }
         }
         
-        Debug.LogWarning($"Element with name '{elementName}' not found!");
         return null;
     }
     
@@ -366,12 +398,6 @@ public class CarInteriorUISO : MonoBehaviour
     /// </summary>
     public void SelectElement(InteractableElementSO element)
     {
-        if (element == null)
-        {
-            Debug.LogWarning("Tried to select a null element!");
-            return;
-        }
-        
         // Önceki hedefi temizle
         if (currentTarget != null)
         {
@@ -380,19 +406,10 @@ public class CarInteriorUISO : MonoBehaviour
         
         // Yeni hedefi ayarla
         currentTarget = element;
-        currentTarget.SetHighlighted(true);
-        OpenControlPanel();
-    }
-    
-    /// <summary>
-    /// İsme göre eleman seç ve UI panelini aç
-    /// </summary>
-    public void SelectElementByName(string elementName)
-    {
-        InteractableElementSO element = FindElementByName(elementName);
-        if (element != null)
+        if (currentTarget != null)
         {
-            SelectElement(element);
+            currentTarget.SetHighlighted(true);
+            OpenControlPanel();
         }
     }
     
@@ -401,9 +418,6 @@ public class CarInteriorUISO : MonoBehaviour
     /// </summary>
     public void FocusOnElement(InteractableElementSO element)
     {
-        if (element == null)
-            return;
-            
         // Önceki hedefi temizle
         if (currentTarget != null)
         {
@@ -412,24 +426,15 @@ public class CarInteriorUISO : MonoBehaviour
         
         // Yeni hedefi ayarla
         currentTarget = element;
-        currentTarget.SetHighlighted(true);
-        
-        // UI metnini güncelle
-        if (centerScreenText)
+        if (currentTarget != null)
         {
-            centerScreenText.text = element.GetDisplayName();
-        }
-    }
-    
-    /// <summary>
-    /// İsme göre elemana odaklan (UI olmadan)
-    /// </summary>
-    public void FocusOnElementByName(string elementName)
-    {
-        InteractableElementSO element = FindElementByName(elementName);
-        if (element != null)
-        {
-            FocusOnElement(element);
+            currentTarget.SetHighlighted(true);
+            
+            // UI metnini güncelle
+            if (centerScreenText)
+            {
+                centerScreenText.text = element.GetDisplayName();
+            }
         }
     }
     
@@ -441,79 +446,84 @@ public class CarInteriorUISO : MonoBehaviour
         return currentTarget;
     }
     
-    /// <summary>
-    /// Tüm etkileşimli elemanları bul
-    /// </summary>
-    public InteractableElementSO[] GetAllInteractableElements()
-    {
-        return FindObjectsOfType<InteractableElementSO>();
-    }
-    
-    /// <summary>
-    /// Tüm etkileşimli elemanları belirli bir tipte bul
-    /// </summary>
-    public List<InteractableElementSO> GetElementsByType(CarInteractionEventSO.TransformationType type)
-    {
-        List<InteractableElementSO> elements = new List<InteractableElementSO>();
-        InteractableElementSO[] allElements = GetAllInteractableElements();
-        
-        foreach (var element in allElements)
-        {
-            if (element.interactionEvent != null && element.interactionEvent.transformationType == type)
-            {
-                elements.Add(element);
-            }
-        }
-        
-        return elements;
-    }
-    
-    /// <summary>
-    /// UI panelinin açık olup olmadığını kontrol et
-    /// </summary>
-    public bool IsControlPanelOpen()
-    {
-        return isControlPanelOpen;
-    }
-    
-    /// <summary>
-    /// Tüm etkileşimi bir anda durdur
-    /// </summary>
-    public void StopAllInteractions()
-    {
-        if (currentTarget != null)
-        {
-            currentTarget.SetHighlighted(false);
-            currentTarget = null;
-        }
-        
-        CloseControlPanel();
-        
-        if (centerScreenText)
-        {
-            centerScreenText.text = "";
-        }
-    }
-    
-    #endregion
-    
     void OnDrawGizmos()
     {
-        if (playerCamera == null) return;
+        if (!showRayDebug) return;
         
-        // Ray'in başlangıç noktasını ve yönünü al
-        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        
-        // Ray'in rengini ayarla (Yeşil = Etkileşimde, Kırmızı = Etkileşim yok)
-        Gizmos.color = currentTarget != null ? Color.green : Color.red;
-        
-        // Ray'i çiz
-        Gizmos.DrawRay(ray.origin, ray.direction * interactionDistance);
-        
-        // Etkileşim mesafesini gösteren küre
-        if (currentTarget != null)
+        if (!Application.isPlaying)
         {
-            Gizmos.DrawWireSphere(ray.origin + ray.direction * interactionDistance, 0.1f);
+            DrawEditorRay();
+        }
+        else
+        {
+            DrawGameRay();
+        }
+    }
+    
+    void DrawEditorRay()
+    {
+        Camera camera = Camera.current;
+        if (camera == null) return;
+        
+        Vector3 startPos = camera.transform.position;
+        Vector3 endPos = startPos + camera.transform.forward * interactionDistance;
+        
+        // Ana ışını çiz
+        Gizmos.color = rayColorNormal;
+        Gizmos.DrawRay(startPos, camera.transform.forward * interactionDistance);
+        
+        if (showHitPoint)
+        {
+            // Başlangıç noktasında artı işareti
+            float crossSize = hitPointSize;
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(startPos + Vector3.up * crossSize, startPos - Vector3.up * crossSize);
+            Gizmos.DrawLine(startPos + Vector3.right * crossSize, startPos - Vector3.right * crossSize);
+            
+            // Bitiş noktasında küre
+            Gizmos.color = rayColorNormal;
+            Gizmos.DrawWireSphere(endPos, hitPointSize);
+        }
+    }
+    
+    void DrawGameRay()
+    {
+        if (rayStartPos == Vector3.zero) return;
+        
+        // Ana ışını çiz
+        Gizmos.color = hasRayHit ? rayColorHit : rayColorNormal;
+        Gizmos.DrawRay(rayStartPos, (rayEndPos - rayStartPos).normalized * interactionDistance);
+        
+        if (showHitPoint)
+        {
+            // Başlangıç noktasında artı işareti
+            float crossSize = hitPointSize;
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(rayStartPos + Vector3.up * crossSize, rayStartPos - Vector3.up * crossSize);
+            Gizmos.DrawLine(rayStartPos + Vector3.right * crossSize, rayStartPos - Vector3.right * crossSize);
+            
+            // Çarpışma noktasında küre
+            if (hasRayHit)
+            {
+                Gizmos.color = rayColorHit;
+                Gizmos.DrawWireSphere(rayEndPos, hitPointSize);
+                
+                // Eğer hedef varsa, hedef nesneye bir çizgi çiz
+                if (currentTarget != null)
+                {
+                    Gizmos.color = Color.cyan;
+                    Gizmos.DrawLine(rayEndPos, currentTarget.transform.position);
+                }
+            }
+        }
+    }
+
+    void OnDisable()
+    {
+        // Component devre dışı kaldığında crosshair'i normal renge döndür
+        if (crosshairImage)
+        {
+            crosshairImage.color = crosshairNormalColor;
         }
     }
 }
