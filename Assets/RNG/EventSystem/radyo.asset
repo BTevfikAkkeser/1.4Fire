@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90eee878b04773f4d976102ca4122d40, type: 3}
+  m_Name: radyo
+  m_EditorClassIdentifier: 
+  eventName: 
+  soundClip: {fileID: 8300000, guid: ab93817a2e33bb1478e975950faaa77b, type: 3}
+  vfx: {fileID: 6403987373463294639, guid: 717ce1e2781a9da4b8ce9ce97fcb71a8, type: 3}
+  targetObject: {fileID: 0}
+  delayAfterPrevious: 1
+  waitForInteraction: 0
+  interactionPrompt: 
+  useRandomChance: 0
+  chanceToTrigger: 0.17
+  failEvents:
+  - {fileID: 0}

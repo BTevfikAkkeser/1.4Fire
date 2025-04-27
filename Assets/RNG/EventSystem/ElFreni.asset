@@ -12,32 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90eee878b04773f4d976102ca4122d40, type: 3}
   m_Name: ElFreni
   m_EditorClassIdentifier: 
-  displayName: ' El Freni'
-  interactionMessage: Press E to interact
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  displayIcon: {fileID: 0}
-  interactionSound: {fileID: 0}
-  soundVolume: 1
-  hasToggleState: 1
-  defaultState: 0
-  useVFX: 0
-  onStateVFXPrefab: {fileID: 0}
-  offStateVFXPrefab: {fileID: 0}
-  vfxOffset: {x: 0, y: 0, z: 0}
-  vfxDuration: 2
-  transformationType: 1
-  rotationAxis: {x: 0, y: 1, z: 0}
-  rotationAmount: 90
-  slideDirection: {x: 0, y: 0, z: 1}
-  slideDistance: 0.1
-  toggleRotation: {x: 0, y: 0, z: -45}
-  minValue: 0
-  maxValue: 1
-  defaultValue: 0
-  parameters:
-  - paramName: 
-    type: 0
-    floatValue: 0
-    intValue: 0
-    boolValue: 0
-    stringValue: 
+  eventName: 
+  soundClip: {fileID: 8300000, guid: 3f78c8167aca2ad47a394ddd1dbcf53c, type: 3}
+  vfx: {fileID: 0}
+  targetObject: {fileID: 0}
+  delayAfterPrevious: 1
+  waitForInteraction: 0
+  interactionPrompt: 
+  useRandomChance: 0
+  chanceToTrigger: 1
+  failEvents: []

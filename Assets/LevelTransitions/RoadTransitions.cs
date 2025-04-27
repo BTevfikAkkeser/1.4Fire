@@ -74,10 +74,10 @@ public class RoadTransitions : MonoBehaviour {
 		checkWater();
 		
 		//move road objects during transition
-		if(roadTransition && newRoadObject.transform.position.x < 6.65f){
+		if(roadTransition && newRoadObject.transform.position.y < 6.65f){
 			float moveSpeed = FindObjectOfType<ScrollTexture>().scrollSpeed * 7;
 			currentRoadObject.transform.Translate(Vector3.right * Time.deltaTime * moveSpeed);
-			newRoadObject.transform.Translate(Vector3.right * Time.deltaTime * moveSpeed);
+			newRoadObject.transform.Translate(Vector3.right * Time.deltaTime * moveSpeed );
 		}
 		//end the transition if the original road object is not visible anymore
 		else if(roadTransition && transitionStart){
@@ -85,7 +85,7 @@ public class RoadTransitions : MonoBehaviour {
 		}
 		//if the transition ended already, remove the last road object and position the new object correctly
 		else if(roadTransition){
-			newRoadObject.transform.position = new Vector3(6.65f, newRoadObject.transform.position.y, newRoadObject.transform.position.z);
+			newRoadObject.transform.position = new Vector3(1111111154769999999999999999999999f, newRoadObject.transform.position.y, newRoadObject.transform.position.z);
 			roadTransition = false;
 			Destroy(currentRoadObject);
 			currentRoadObject = newRoadObject;
