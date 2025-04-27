@@ -224,7 +224,24 @@ public class DriftController : MonoBehaviour
 
     }
 
+    // Add this method to trigger handbrake functionality
+    public void ActivateHandbrake()
+    {
+        // Set handbrake to true
+        isBreaking = true;
 
+        // Start a coroutine to release the handbrake after a delay
+        StartCoroutine(ReleaseHandbrakeAfterDelay(3.0f));
+    }
+
+    // Coroutine to release the handbrake
+    private IEnumerator ReleaseHandbrakeAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Release the handbrake
+        isBreaking = false;
+    }
     private void CalculateRevs()
     {
         // calculate engine revs (for display / sound)

@@ -1914,7 +1914,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 288233516}
-  - component: {fileID: 288233515}
+  - component: {fileID: 288233517}
   m_Layer: 0
   m_Name: Gamemanager
   m_TagString: Untagged
@@ -1922,18 +1922,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &288233515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 288233514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2fbd2b056b88774abe85364d68fbc1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &288233516
 Transform:
   m_ObjectHideFlags: 0
@@ -1949,6 +1937,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &288233517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288233514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16d8c445e24b11548931417981e98309, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &302721398
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3722,7 +3722,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9d2c45fa279b9d44ca3e0d30953ccce8, type: 2}
   - {fileID: 11400000, guid: 61834bea3a7a4c9448378124cdc06baa, type: 2}
   - {fileID: 11400000, guid: 37b9407d63bc2a84eaf74c098f0a64fd, type: 2}
-  - {fileID: 11400000, guid: 543f5052c3c673249b53fc1118180618, type: 2}
+  - {fileID: 11400000, guid: 883e016d4f90e594cad2831cd193cf82, type: 2}
+  - {fileID: 11400000, guid: ef49f614363b82d4ab5176b54fe17a29, type: 2}
+  - {fileID: 11400000, guid: 9d2c45fa279b9d44ca3e0d30953ccce8, type: 2}
+  - {fileID: 11400000, guid: 7a1cce75fa3753545bb539a771365338, type: 2}
+  - {fileID: 11400000, guid: 37b9407d63bc2a84eaf74c098f0a64fd, type: 2}
+  - {fileID: 11400000, guid: c1b725dbbc2ab9a4ca9d326c389fdc6d, type: 2}
+  - {fileID: 11400000, guid: c19e3e2adc5f7b440a82056323046ab4, type: 2}
+  - {fileID: 11400000, guid: bc9367c3a25c0284d9c7b2008f6ea090, type: 2}
+  - {fileID: 11400000, guid: bc9367c3a25c0284d9c7b2008f6ea090, type: 2}
+  - {fileID: 11400000, guid: 61834bea3a7a4c9448378124cdc06baa, type: 2}
   eventOrigin: {fileID: 0}
   debugMode: 1
   eventPlan: []
@@ -7940,7 +7949,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e125b2d078df9d9458cbea120565950c, type: 3}
+  m_Sprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10448,6 +10457,14 @@ PrefabInstance:
     - target: {fileID: 3511976899118452065, guid: 6c58ef12603a5e6448acbef61ed57146, type: 3}
       propertyPath: m_LocalPosition.z
       value: -1.496
+      objectReference: {fileID: 0}
+    - target: {fileID: 3595248719995294741, guid: 6c58ef12603a5e6448acbef61ed57146, type: 3}
+      propertyPath: m_MaxTorque
+      value: 350
+      objectReference: {fileID: 0}
+    - target: {fileID: 3595248719995294741, guid: 6c58ef12603a5e6448acbef61ed57146, type: 3}
+      propertyPath: m_ReverseTorque
+      value: 240.7
       objectReference: {fileID: 0}
     - target: {fileID: 3698223414167511640, guid: 6c58ef12603a5e6448acbef61ed57146, type: 3}
       propertyPath: m_LocalPosition.y
