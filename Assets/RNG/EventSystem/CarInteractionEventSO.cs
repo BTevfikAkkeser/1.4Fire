@@ -9,8 +9,14 @@ public class CarInteractionEventSO : ScriptableObject
     public AudioClip soundClip;    // Ses klibi
     public ParticleSystem vfx;     // VFX (Visual Effects)
 
-    private DriftController driftController;
+    [Header("Target Settings")]
+    public GameObject targetObject;  // Reference to the target object (car, etc.)
 
+    public float delayAfterPrevious = 0f;
+    
+    /// <summary>
+    /// Trigger this event with the specified event origin transform
+    /// </summary>
     public void TriggerEvent(Transform eventOrigin)
     {
         // Eğer event'te ses varsa, ses kaynağını oynat
@@ -30,14 +36,28 @@ public class CarInteractionEventSO : ScriptableObject
             newVFX.Play();
         }
 
-        // Eğer el freni eventi ise, DriftController üzerinden el freni aktif edilir
-        if (targetObject != null)
+       if (targetObject != null)
         {
-            driftController = targetObject.GetComponent<DriftController>();
+            DriftController driftController = targetObject.GetComponent<DriftController>();
             if (driftController != null)
             {
-               // driftController.m_MaxHandbrakeTorque();  // El freni etkinleştirilir
+                // Instead of calling ActivateHandbrake, directly set isBreaking
+                driftController.isBreaking = true;
+                
+                // Find any MonoBehaviour to start a coroutine
+                MonoBehaviour mb = Object.FindObjectOfType<MonoBehaviour>();
+                if (mb != null)
+                {
+                    mb.StartCoroutine(ReleaseHandbrake(driftController, 3.0f));
+                }
             }
+        }
+
+        // Add this method to your class
+        System.Collections.IEnumerator ReleaseHandbrake(DriftController controller, float duration)
+        {
+            yield return new WaitForSeconds(duration);
+            controller.isBreaking = false;
         }
     }
 

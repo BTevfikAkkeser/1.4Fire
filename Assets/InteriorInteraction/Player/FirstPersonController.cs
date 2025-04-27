@@ -43,7 +43,9 @@ public class FirstPersonController : MonoBehaviour
     private float rotationY = 0;  // Horizontal rotation (looking left/right)
     private float targetFOV;
     private Outlinable currentTarget;
-
+    
+    // Reference to car event manager for handling interactions
+    private CarEventManager carEventManager;
     
     void Start()
     {
@@ -53,6 +55,9 @@ public class FirstPersonController : MonoBehaviour
         {
             playerCamera = Camera.main;
         }
+        
+        // Find car event manager in the scene
+        carEventManager = FindObjectOfType<CarEventManager>();
         
         // Hide and lock cursor
         Cursor.lockState = CursorLockMode.Locked;
@@ -79,7 +84,6 @@ public class FirstPersonController : MonoBehaviour
         // Allow cursor unlock with Escape key
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            CarInteractionEventSO interactionEvent = currentTarget.GetComponent<CarInteractionEventSO>();
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -91,8 +95,6 @@ public class FirstPersonController : MonoBehaviour
             Cursor.visible = false;
         }
     }
-
-
     
     /// <summary>
     /// Handle mouse look controls with horizontal and vertical limits
@@ -142,34 +144,15 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     void CheckForInteractiveObject()
     {
-
-        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit, interactionDistance, interactionLayer))
-        {
-            Outlinable target = hit.collider.GetComponent<Outlinable>();
-            if (target != null)
-            {
-                if (currentTarget != target)
-                {
-                    // Yeni hedef, eski hedefin highlight'ı kaldırılır
-                    if (currentTarget != null)
-                    {
-                        currentTarget.SetHighlighted(false);
-                    }
-                    currentTarget = target;
-                    currentTarget.SetHighlighted(true);  // Yeni hedefi highlight et
-                }
-            }
-                currentTarget = target;
-                currentTarget.SetHighlighted(true);
-        }
         // Clear previous target highlight if it exists
         if (currentTarget != null)
         {
-            // Disable the outline effect
-            currentTarget.GetComponent<Outline>().enabled = false;
+            // Get the outline component and disable it
+            Outline outline = currentTarget.GetComponent<Outline>();
+            if (outline != null)
+            {
+                outline.enabled = false;
+            }
             currentTarget = null;
         }
         
@@ -196,11 +179,15 @@ public class FirstPersonController : MonoBehaviour
             Outlinable outlinable = hit.collider.GetComponent<Outlinable>();
             if (outlinable != null)
             {
-                currentTarget.SetHighlighted(false);
-                // Set as current target and highlight it
+                // Set as current target
                 currentTarget = outlinable;
-                // Enable the outline effect
-                currentTarget.GetComponent<Outline>().enabled = true;
+                
+                // Enable outline component
+                Outline outline = currentTarget.GetComponent<Outline>();
+                if (outline != null)
+                {
+                    outline.enabled = true;
+                }
                 
                 // Update UI
                 if (centerScreenText)
@@ -229,9 +216,19 @@ public class FirstPersonController : MonoBehaviour
         {
             // Perform interaction
             Debug.Log("Interacting with " + currentTarget.gameObject.name);
-            // Here you can add specific interaction logic like opening doors, triggering events, etc.
-            // For example, if the object has a specific interaction method, you could call it:
-            // currentTarget.Interact(); if it has such a method
+            
+            // Check if this should trigger a car event
+            if (carEventManager != null)
+            {
+                carEventManager.OnPlayerInteracted();
+            }
+            
+            // Check if object has a drift controller for handbrake activation
+            DriftController driftController = currentTarget.GetComponent<DriftController>();
+            if (driftController != null)
+            {
+                driftController.ActivateHandbrake();
+            }
         }
     }
 

@@ -13,6 +13,12 @@ public class CarEventManager : MonoBehaviour
 {
     [Header("Event Setup")]
     [SerializeField] private List<CarInteractionEventSO> eventSequence;
+    
+    [Header("Event Origin")]
+    [SerializeField] private Transform eventOrigin;
+    
+    [Header("Debug Settings")]
+    [SerializeField] private bool debugMode = true;
 
     [Header("Runtime Event Plan (Debug Only)")]
     [SerializeField] private List<EventPlanItem> eventPlan = new List<EventPlanItem>();
@@ -20,9 +26,16 @@ public class CarEventManager : MonoBehaviour
     private int currentEventIndex = 0;
     private bool waitingForInteraction = false;
     private bool isFailChainActive = false;
+    private CarInteractionEventSO currentInteractionEvent = null;
+    private List<CarInteractionEventSO> currentFailChain = null;
+    private int currentFailChainIndex = 0;
 
     private void Start()
     {
+        // Set eventOrigin to this object if not specified
+        if (eventOrigin == null)
+            eventOrigin = this.transform;
+            
         BuildEventPlan();
         StartCoroutine(PlayEvents());
     }
@@ -51,17 +64,20 @@ public class CarEventManager : MonoBehaviour
             if (currentEvent.useRandomChance)
             {
                 float roll = Random.value;
-                Debug.Log($"RNG Roll for {currentEvent.eventName}: {roll}");
+                if (debugMode) Debug.Log($"RNG Roll for {currentEvent.eventName}: {roll}");
 
                 if (roll > currentEvent.chanceToTrigger)
                 {
-                    Debug.Log($"Event {currentEvent.eventName} FAILED RNG check, switching to Fail Chain.");
+                    if (debugMode) Debug.Log($"Event {currentEvent.eventName} FAILED RNG check, switching to Fail Chain.");
 
                     if (currentEvent.failEvents != null && currentEvent.failEvents.Count > 0)
                     {
-                        InsertFailChainIntoPlan(currentEvent.failEvents);
-                        StartCoroutine(PlayFailEvents(currentEvent.failEvents));
-                        yield break;
+                        InsertFailChainIntoPlan(currentEventIndex + 1, currentEvent.failEvents);
+                        yield return StartCoroutine(PlayFailChain(currentEvent.failEvents));
+                        
+                        // Continue with the next event after finishing the fail chain
+                        currentEventIndex++;
+                        continue;
                     }
                     else
                     {
@@ -74,6 +90,7 @@ public class CarEventManager : MonoBehaviour
             if (currentEvent.waitForInteraction)
             {
                 waitingForInteraction = true;
+                currentInteractionEvent = currentEvent;
                 ShowInteractionPrompt(currentEvent.interactionPrompt);
 
                 while (waitingForInteraction)
@@ -89,14 +106,16 @@ public class CarEventManager : MonoBehaviour
             currentEventIndex++;
         }
 
-        Debug.Log("Event Sequence Finished.");
+        if (debugMode) Debug.Log("Event Sequence Finished.");
     }
 
-    private IEnumerator PlayFailEvents(List<CarInteractionEventSO> failEvents)
+    private IEnumerator PlayFailChain(List<CarInteractionEventSO> failEvents)
     {
-        Debug.Log("Playing Fail Event Chain!");
+        if (debugMode) Debug.Log("Playing Fail Event Chain!");
 
         isFailChainActive = true;
+        currentFailChain = failEvents;
+        currentFailChainIndex = 0;
 
         foreach (var failEvent in failEvents)
         {
@@ -105,6 +124,7 @@ public class CarEventManager : MonoBehaviour
             if (failEvent.waitForInteraction)
             {
                 waitingForInteraction = true;
+                currentInteractionEvent = failEvent;
                 ShowInteractionPrompt(failEvent.interactionPrompt);
 
                 while (waitingForInteraction)
@@ -116,46 +136,70 @@ public class CarEventManager : MonoBehaviour
             {
                 TriggerEvent(failEvent);
             }
+            
+            currentFailChainIndex++;
         }
 
-        Debug.Log("Fail Event Chain Finished.");
+        if (debugMode) Debug.Log("Fail Event Chain Finished.");
+        isFailChainActive = false;
+        currentFailChain = null;
     }
 
-    private void InsertFailChainIntoPlan(List<CarInteractionEventSO> failEvents)
+    private void InsertFailChainIntoPlan(int insertIndex, List<CarInteractionEventSO> failEvents)
     {
+        // Create a temporary list for debug visualization
+        List<EventPlanItem> updatedPlan = new List<EventPlanItem>();
+        
+        // Add events before the insertion point
+        for (int i = 0; i < insertIndex; i++)
+        {
+            updatedPlan.Add(eventPlan[i]);
+        }
+        
+        // Add fail chain events
         foreach (var failEv in failEvents)
         {
-            eventPlan.Add(new EventPlanItem
+            updatedPlan.Add(new EventPlanItem
             {
                 eventName = failEv.eventName + " (Fail)",
                 isFailChain = true
             });
         }
+        
+        // Add events after the insertion point
+        for (int i = insertIndex; i < eventPlan.Count; i++)
+        {
+            updatedPlan.Add(eventPlan[i]);
+        }
+        
+        // Replace the event plan
+        eventPlan = updatedPlan;
     }
 
     private void TriggerEvent(CarInteractionEventSO carEvent)
     {
-        Debug.Log($"Event Triggered: {carEvent.eventName}");
+        if (debugMode) Debug.Log($"Event Triggered: {carEvent.eventName}");
+        
+        // Call the event's TriggerEvent method with the event origin
+        if (carEvent != null)
+        {
+            carEvent.TriggerEvent(eventOrigin);
+        }
     }
 
     public void OnPlayerInteracted()
     {
-        if (waitingForInteraction)
+        if (waitingForInteraction && currentInteractionEvent != null)
         {
             waitingForInteraction = false;
-
-            if (!isFailChainActive)
-            {
-                CarInteractionEventSO currentEvent = eventSequence[currentEventIndex];
-                if (currentEvent != null)
-                    TriggerEvent(currentEvent);
-            }
+            TriggerEvent(currentInteractionEvent);
+            currentInteractionEvent = null;
         }
     }
 
     private void ShowInteractionPrompt(string prompt)
     {
-        Debug.Log($"Prompt: {prompt}");
+        if (debugMode) Debug.Log($"Prompt: {prompt}");
         // Buraya gerçek bir UI prompt gösterebilirsin.
     }
 }

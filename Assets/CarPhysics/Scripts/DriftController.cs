@@ -223,7 +223,24 @@ public class DriftController : MonoBehaviour
         m_GearFactor = Mathf.Lerp(m_GearFactor, targetGearFactor, Time.deltaTime * 5f);
 
     }
+    // Add this method to trigger handbrake functionality
+    public void ActivateHandbrake()
+    {
+        // Set handbrake to true
+        isBreaking = true;
+        
+        // Start a coroutine to release the handbrake after a delay
+        StartCoroutine(ReleaseHandbrakeAfterDelay(3.0f));
+    }
 
+    // Coroutine to release the handbrake
+    private IEnumerator ReleaseHandbrakeAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        // Release the handbrake
+        isBreaking = false;
+    }
 
     private void CalculateRevs()
     {
